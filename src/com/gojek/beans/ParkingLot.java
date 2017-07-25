@@ -9,12 +9,15 @@ import java.util.*;
 public class ParkingLot {
 
     private NavigableSet<Integer> availableSlots;
-    private Map<Color, List<Ticket>> colorListMap = new HashMap<>();
+    private Map<Color, Set<Ticket>> colorListMap = new HashMap<>();
+    private Map<Integer, Ticket> issuedTickets = new HashMap<>();
+    private int parkingSize;
 
     public ParkingLot(int slots){
         for (int i=1;i<=slots;i++){
             availableSlots.add(i);
         }
+        parkingSize = slots;
     }
 
 //    private void validate(String registrationNumber, String name){
@@ -41,10 +44,21 @@ public class ParkingLot {
         ticket.setId(UUID.randomUUID().hashCode());
         ticket.setSlot(availableSlots.pollFirst());
         ticket.setCar(car);
-        colorListMap.putIfAbsent(color, new ArrayList<>());
+        colorListMap.putIfAbsent(color, new HashSet<>());
         colorListMap.get(color).add(ticket);
+        issuedTickets.put(ticket.getSlot(), ticket);
         return ticket;
     }
+
+
+    public void exit(int slot){
+        if (slot>parkingSize || slot<0)
+            throw new IllegalArgumentException("Invalid slot");
+        Ticket ticket = issuedTickets.remove(slot);
+        availableSlots.add(slot);
+        colorListMap.get(ticket.getCar().getColor()).remove(ticket);
+    }
+
 
 
 

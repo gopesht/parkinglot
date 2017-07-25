@@ -33,5 +33,23 @@ public class Ticket {
         this.slot = slot;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        Ticket ticket = (Ticket) o;
+
+        if (id != ticket.id) return false;
+        if (slot != ticket.slot) return false;
+        return car.equals(ticket.car);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + car.hashCode();
+        result = 31 * result + slot;
+        return result;
+    }
 }
