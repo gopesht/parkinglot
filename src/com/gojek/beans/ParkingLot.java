@@ -1,5 +1,10 @@
 package com.gojek.beans;
 
+import com.sun.deploy.util.StringUtils;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -8,12 +13,19 @@ import java.util.*;
 
 public class ParkingLot {
 
-    private NavigableSet<Integer> availableSlots = new TreeSet<>();
-    private Map<String, Set<Ticket>> colorTicketSet = new HashMap<>();
-    private Map<Integer, Ticket> issuedTickets = new HashMap<>();
+    private NavigableSet<Integer> availableSlots;
+    private Map<String, Set<Ticket>> colorTicketSet;
+    private Map<Integer, Ticket> issuedTickets;
     private int parkingSize;
 
-    public ParkingLot(int slots){
+    public ParkingLot(){
+        availableSlots = new TreeSet<>();
+        colorTicketSet = new HashMap<>();
+        issuedTickets = new HashMap<>();
+
+    }
+
+    public void initializeSlots(int slots){
         for (int i=1;i<=slots;i++){
             availableSlots.add(i);
         }
@@ -83,8 +95,67 @@ public class ParkingLot {
         return slotNumbers;
     }
 
-    
+    public List<String> getStatus(){
+        List<String> rows = new ArrayList<>();
+        List<String> headers = Arrays.asList("Slot No.", "Registration Number", "Color");
+        rows.add(StringUtils.join(headers,"\t"));
+        Collection<Ticket> tickets = issuedTickets.values();
+        tickets.forEach(ticket ->
+            rows.add(Integer.toString(ticket.getSlot())+"\t"+ticket.getCar().getRegistrationNumber()+
+                    "\t"+ticket.getCar().getColor().getColorName())
+        );
+        return rows;
+    }
 
+
+    public static void main(String[] args) {
+        try(BufferedReader br = new BufferedReader(new FileReader("/Users/a1dmiuxe/parkinglot.txt"))) {
+            String line;
+            ParkingLot parkingLot = new ParkingLot();
+            while ((line = br.readLine())!=null){
+                String[] entry = line.split(" ");
+                try {
+                    switch (entry[0]){
+                        case "create_parking_lot":
+                            parkingLot.initializeSlots(Integer.parseInt(entry[1]));
+                            System.out.println("Created a parking lot with "+entry[1]+" slots");
+                            break;
+                        case "park":
+                            Ticket ticket = parkingLot.issueTicket(entry[1], entry[2]);
+                            System.out.println("Allocated slot number: "+ticket.getSlot());
+                            break;
+                        case "leave":
+                            parkingLot.exit(Integer.parseInt(entry[1]));
+                            System.out.println("Slot number "+entry[1]+" is free");
+                            break;
+                        case "status":
+                            List<String> table = parkingLot.getStatus();
+                            for (String row : table)
+                                System.out.println(row);
+                            break;
+                        case "registration_numbers_for_cars_with_colour":
+                            List<String> registrationNumbers = parkingLot.getRegistrationNumbersByColor(entry[1]);
+                            String result = StringUtils.join(registrationNumbers, ",");
+                            System.out.println(result);
+                            break;
+                        case "slot_numbers_for_cars_with_colour":
+                            List<Integer> slots = parkingLot.getSlotNumbersByColor(entry[1]);
+                            for (int i=0;i<slots.size()-1;i++)
+                                System.out.print(slots.get(i)+",");
+                            System.out.print(slots.get(slots.size()-1)+"\n");
+                            break;
+                        default:
+                            System.out.println("Invalid Command!!!!");
+                    }
+                }catch (RuntimeException e){
+                    System.out.println(e.getMessage());
+                }
+
+            }
+        }catch (IOException io){
+
+        }
+    }
 
 
 
