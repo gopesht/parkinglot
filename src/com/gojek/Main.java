@@ -44,7 +44,7 @@ public class Main {
                             String result = "";
                             for (int i=0;i<registrationNumbers.size()-1;i++)
                                 result += registrationNumbers.get(i) + ",";
-                            System.out.println(result+registrationNumbers.get(registrationNumbers.size()));
+                            System.out.println(result+registrationNumbers.get(registrationNumbers.size()-1));
                             break;
                         case "slot_numbers_for_cars_with_colour":
                             List<Integer> slots = parkingLot.getSlotNumbersByColor(entry[1]);
@@ -63,6 +63,7 @@ public class Main {
                             System.out.println("Invalid Command!!!!");
                     }
                 }catch (RuntimeException e){
+                    e.printStackTrace();
                     System.out.println(e.getMessage());
                 }
 
