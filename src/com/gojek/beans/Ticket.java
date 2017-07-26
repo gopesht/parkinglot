@@ -1,13 +1,13 @@
 package com.gojek.beans;
 
 /**
- * Created by a1dmiuxe(gopesh.tulsyan) on 25/07/17.
+ * Created by a1dmiuxe(gopesh.tulsyan) on 26/07/17.
  */
 
 public class Ticket {
     private int id;
-    private Car car;
     private int slot;
+    private Car car;
 
     public int getId() {
         return id;
@@ -17,20 +17,20 @@ public class Ticket {
         this.id = id;
     }
 
-    public Car getCar() {
-        return car;
-    }
-
-    public void setCar(Car car) {
-        this.car = car;
-    }
-
     public int getSlot() {
         return slot;
     }
 
     public void setSlot(int slot) {
         this.slot = slot;
+    }
+
+    public Car getCar() {
+        return car;
+    }
+
+    public void setCar(Car car) {
+        this.car = car;
     }
 
     @Override
@@ -48,8 +48,8 @@ public class Ticket {
     @Override
     public int hashCode() {
         int result = id;
-        result = 31 * result + car.hashCode();
         result = 31 * result + slot;
+        result = 31 * result + car.hashCode();
         return result;
     }
 }
