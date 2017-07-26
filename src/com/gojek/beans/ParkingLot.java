@@ -73,8 +73,17 @@ public class ParkingLot {
         return slotNumbers;
     }
 
-    
 
+    public List<String> getRegistrationNumbersByColor(String colorName){
+        validateColor(colorName);
+        Set<Ticket> tickets = colorTicketSet.get(colorName);
+        List<String> slotNumbers = new ArrayList<>();
+        for (Ticket ticket: tickets)
+            slotNumbers.add(ticket.getCar().getRegistrationNumber());
+        return slotNumbers;
+    }
+
+    
 
 
 
