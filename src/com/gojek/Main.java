@@ -63,7 +63,6 @@ public class Main {
                             System.out.println("Invalid Command!!!!");
                     }
                 }catch (RuntimeException e){
-                    e.printStackTrace();
                     System.out.println(e.getMessage());
                 }
 

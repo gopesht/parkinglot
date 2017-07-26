@@ -64,7 +64,7 @@ public class ParkingLot {
 
 
     public void exit(int slot){
-        if (slot>parkingSize || slot<0)
+        if (slot>parkingSize || slot<0 || parkingSize == availableSlots.size())
             throw new IllegalArgumentException("Invalid slot");
         if (bookedSlots.get(slot) == null)
             throw new IllegalArgumentException("Slot not booked yet!");
