@@ -7,7 +7,7 @@ package com.gojek.beans;
 public class Color {
     String name;
 
-    public String getColor() {
+    public String getColorName() {
         return name;
     }
 

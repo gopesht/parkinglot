@@ -8,8 +8,8 @@ import java.util.*;
 
 public class ParkingLot {
 
-    private NavigableSet<Integer> availableSlots;
-    private Map<Color, Set<Ticket>> colorListMap = new HashMap<>();
+    private NavigableSet<Integer> availableSlots = new TreeSet<>();
+    private Map<String, Set<Ticket>> colorTicketSet = new HashMap<>();
     private Map<Integer, Ticket> issuedTickets = new HashMap<>();
     private int parkingSize;
 
@@ -27,25 +27,29 @@ public class ParkingLot {
 //            throw new IllegalArgumentException("Empty color");
 //    }
 
-    public Ticket issueTicket(String registrationNumber, String name) throws RuntimeException, IllegalArgumentException{
+    private void validateColor(String color){
+        if (color == null || color.equals(""))
+            throw new IllegalArgumentException("Empty color");
+    }
+
+    public Ticket issueTicket(String registrationNumber, String colorName) throws RuntimeException, IllegalArgumentException{
         if (availableSlots.size()==0)
-            throw new RuntimeException("Parking Full!");
+            throw new RuntimeException("Sorry, parking lot is full");
         if (registrationNumber == null || registrationNumber.equals(""))
             throw new IllegalArgumentException("Empty registration number");
-        else if (name == null || name.equals(""))
-            throw new IllegalArgumentException("Empty color");
+        validateColor(colorName);
 
         Car car = new Car();
         Color color = new Color();
-        color.setColor(name);
+        color.setColor(colorName);
         car.setColor(color);
         car.setRegistrationNumber(registrationNumber);
         Ticket ticket = new Ticket();
         ticket.setId(UUID.randomUUID().hashCode());
         ticket.setSlot(availableSlots.pollFirst());
         ticket.setCar(car);
-        colorListMap.putIfAbsent(color, new HashSet<>());
-        colorListMap.get(color).add(ticket);
+        colorTicketSet.putIfAbsent(colorName, new HashSet<>());
+        colorTicketSet.get(colorName).add(ticket);
         issuedTickets.put(ticket.getSlot(), ticket);
         return ticket;
     }
@@ -56,8 +60,20 @@ public class ParkingLot {
             throw new IllegalArgumentException("Invalid slot");
         Ticket ticket = issuedTickets.remove(slot);
         availableSlots.add(slot);
-        colorListMap.get(ticket.getCar().getColor()).remove(ticket);
+        colorTicketSet.get(ticket.getCar().getColor().getColorName()).remove(ticket);
     }
+
+
+    public List<Integer> getSlotNumbersByColor(String colorName){
+        validateColor(colorName);
+        Set<Ticket> tickets = colorTicketSet.get(colorName);
+        List<Integer> slotNumbers = new ArrayList<>();
+        for (Ticket ticket: tickets)
+            slotNumbers.add(ticket.getSlot());
+        return slotNumbers;
+    }
+
+    
 
 
 
